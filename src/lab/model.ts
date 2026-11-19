@@ -401,29 +401,19 @@ export function findExternalAnchorsInSubtree(
 }
 
 /**
- * Gera um documento HTML5 completo e autossuficiente (com `<!DOCTYPE html>`,
- * `<html lang="pt-BR">`, `<head>`, `<meta charset="UTF-8">`, viewport, Google Fonts,
- * `<style>` e `<body class="pagina">`) para um elemento/seção ou para o site inteiro,
- * pronto para o aluno salvar como `index.html` e abrir no navegador.
+ * Gera um documento HTML5 completo (`<!DOCTYPE html>`, `<html lang="pt-BR">`, `<head>`,
+ * `<meta charset="UTF-8">`, viewport, Google Fonts, `<link rel="stylesheet" href="style.css">`
+ * e `<body class="pagina">`), seguindo a boa prática de separar o HTML (`index.html`)
+ * do CSS externo (`style.css` exibido na aba CSS).
  */
 export function toStandaloneHtmlDocument(
   n: N,
   siteTitle: string,
-  pageStyle: Style,
-  overrides: Overrides = {},
+  _pageStyle: Style,
+  _overrides: Overrides = {},
   contentOverrides: ContentOverrides = {},
 ): string {
   const isFullPage = n.tag === "body";
-  const cssCode = isFullPage
-    ? toFullSiteCss(n, overrides)
-    : `/* Regras gerais e fonte/fundo herdados da página (.pagina) */\n* {\n  box-sizing: border-box;\n}\n\n.pagina {\n${Object.entries(
-        pageStyle,
-      )
-        .map(([k, v]) => `  ${k}: ${v};`)
-        .join(
-          "\n",
-        )}\n}\n\nh1, h2, h3, p {\n  margin-top: 0;\n}\n\n${toCss(n, overrides)}\n\n/* Responsividade para celulares e telas até 800px (Aula 5) */\n@media screen and (max-width: 800px) {\n  div, img {\n    float: none;\n    width: 100%;\n    margin-left: 0px;\n    margin-right: 0px;\n  }\n}`;
-
   const bodyHtml = isFullPage
     ? (n.children ?? []).map((c) => toHtml(c, 2, contentOverrides)).join("\n")
     : toHtml(n, 2, contentOverrides);
@@ -436,12 +426,7 @@ export function toStandaloneHtmlDocument(
     <title>${siteTitle}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Fraunces:wght@600;700&family=Space+Grotesk:wght@500;700&display=swap">
-    <style>
-${cssCode
-  .split("\n")
-  .map((line) => (line ? `      ${line}` : ""))
-  .join("\n")}
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body class="pagina">
 ${bodyHtml}

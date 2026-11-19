@@ -141,7 +141,7 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
           expect(nodeCss).toContain(`.${usedCls} {`);
         }
 
-        // Verify standalone HTML5 document for every node
+        // Verify standalone HTML5 document for every node (uses external style.css instead of inline <style>)
         const standaloneDoc = toStandaloneHtmlDocument(n, site.nome, site.root.style);
         expect(standaloneDoc).toContain("<!DOCTYPE html>");
         expect(standaloneDoc).toContain('<html lang="pt-BR">');
@@ -149,8 +149,9 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
         expect(standaloneDoc).toContain(
           '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
         );
+        expect(standaloneDoc).toContain('<link rel="stylesheet" href="style.css">');
+        expect(standaloneDoc).not.toContain("<style>");
         expect(standaloneDoc).toContain('<body class="pagina">');
-        expect(standaloneDoc).toContain(".pagina {");
         expect(standaloneDoc).toContain("</html>");
       }
 

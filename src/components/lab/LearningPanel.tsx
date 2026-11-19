@@ -194,8 +194,8 @@ export function LearningPanel({
                 </span>
                 <p className="text-xs text-muted-foreground">
                   {effectiveFullHtml
-                    ? "Arquivo index.html completo com <!DOCTYPE html>, <head>, <style> e <body>, pronto para salvar e abrir no navegador."
-                    : "Mostrando apenas o trecho HTML deste componente. Para testar sozinho no navegador ou ver as demais seções, use o botão ao lado."}
+                    ? "Arquivo index.html completo com <!DOCTYPE html>, <head>, link para style.css e <body>. Copie também o código da aba CSS e salve como style.css na mesma pasta."
+                    : "Mostrando apenas o trecho HTML deste componente. Para ver o documento HTML5 completo ou as demais seções, use o botão ao lado."}
                 </p>
               </div>
               {!isRootPage && (
