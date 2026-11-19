@@ -24,7 +24,7 @@ export const Route = createFileRoute("/site/$slug")({
 
 type Overrides = Record<string, Style>;
 
-function Render({ n, sel, ov, onSel }: { n: N; sel?: string; ov: Overrides; onSel: (id: string) => void }) {
+function Render({ n, sel, ov, onSel }: { n: N; sel: string | undefined; ov: Overrides; onSel: (id: string) => void }) {
   const Tag = (n.tag === "body" ? "div" : n.tag) as any;
   const isSel = sel === n.id;
   const props = {
@@ -68,7 +68,7 @@ const swatches = ["#ffffff", "#1a1f36", "#3f7e44", "#1b9bc4", "#c5192d", "#e08a1
 
 function Lab({ n, ov, set, reset }: { n: N; ov: Style; set: (k: string, v: string) => void; reset: () => void }) {
   const cur = { ...n.style, ...ov };
-  const bg = cur["background-color"] ?? (cur.background?.startsWith("#") ? cur.background : undefined);
+  const bg = cur["background-color"] ?? (cur["background"]?.startsWith("#") ? cur["background"] : undefined);
   const slider = (label: string, prop: string, max: number, unit = "px", fallback = 0) => (
     <label className="block text-sm">
       <span className="flex justify-between text-foreground"><span>{label} <code className="text-xs text-muted-foreground">{prop}</code></span><b>{cur[prop] ?? `${fallback}${unit}`}</b></span>
@@ -89,8 +89,8 @@ function Lab({ n, ov, set, reset }: { n: N; ov: Style; set: (k: string, v: strin
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">Mude os valores e veja o site mudar na hora.</p>
-      {color("Cor de fundo", n.style.background && !n.style["background-color"] ? "background" : "background-color", bg)}
-      {color("Cor do texto", "color", cur.color)}
+      {color("Cor de fundo", n.style["background"] && !n.style["background-color"] ? "background" : "background-color", bg)}
+      {color("Cor do texto", "color", cur["color"])}
       {slider("Tamanho da fonte", "font-size", 80, "px", 16)}
       {slider("Espaçamento interno", "padding", 120)}
       {slider("Espaçamento externo", "margin", 80)}

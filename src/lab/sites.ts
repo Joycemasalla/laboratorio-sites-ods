@@ -20,7 +20,7 @@ const photos: Record<string, string[]> = {
   recycling: ["1532996122724-e3c354a0b15b", "1611284446314-60a58ac0deb9", "1604187351574-c75ca79f5807"],
   "forest,climate": ["1470071459604-3b5ec3a7fe05", "1441974231531-c6227db76b6e", "1473773508845-188df298d2d1"],
 };
-const img = (k: string, l: number) => `https://images.unsplash.com/photo-${photos[k][l - 1]}?w=900&q=70&auto=format&fit=crop`;
+const img = (k: string, l: number) => `https://images.unsplash.com/photo-${photos[k]?.[l - 1] ?? ""}?w=900&q=70&auto=format&fit=crop`;
 
 function build(c: Content): N {
   const t = c.theme;

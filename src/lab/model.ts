@@ -85,6 +85,7 @@ export function toCss(n: N, s: Style = n.style): string {
 export function findNode(n: N, id: string): N | undefined {
   if (n.id === id) return n;
   for (const c of n.children ?? []) { const f = findNode(c, id); if (f) return f; }
+  return undefined;
 }
 
 export function highlight(code: string, lang: "html" | "css"): string {
