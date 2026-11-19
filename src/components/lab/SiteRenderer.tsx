@@ -20,8 +20,13 @@ export function SiteRenderer({
 }: SiteRendererProps) {
   const Tag = (n.tag === "body" ? "div" : n.tag) as ElementType;
   const isSel = sel === n.id;
-  const isDivBox = n.tag === "div" || n.tag === "body";
-  const showXray = xray && isDivBox;
+  const isContainerBox =
+    n.tag === "div" ||
+    n.tag === "body" ||
+    n.tag === "section" ||
+    n.tag === "header" ||
+    n.tag === "footer";
+  const showXray = xray && isContainerBox;
 
   const co = contentOv[n.id];
   const displayText = co?.text ?? n.text;
@@ -48,7 +53,7 @@ export function SiteRenderer({
 
   const xrayBadge =
     showXray && !isSel ? (
-      <span className="lab-xray-badge">{`<${n.tag === "body" ? "body" : "div"} class="${n.cls}">`}</span>
+      <span className="lab-xray-badge">{`<${n.tag === "body" ? "body" : n.tag} class="${n.cls}">`}</span>
     ) : null;
 
   if (n.tag === "img") {

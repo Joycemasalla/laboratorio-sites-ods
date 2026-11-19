@@ -17,6 +17,8 @@ export type Kind =
   | "card"
   | "column"
   | "stat"
+  | "list"
+  | "listitem"
   | "footer";
 
 export type N = {
@@ -52,17 +54,17 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   header: {
     nome: "Cabeçalho",
     explica:
-      "Uma <div> com a classe .cabecalho que fica no topo do site e organiza o logotipo e o menu de navegação. Com display: flex e justify-content: space-between, o logotipo fica à esquerda e o menu à direita.",
+      'O <header> (ou <div class="cabecalho">) fica no topo do site e apresenta o título/logotipo e os links de navegação para as seções da página.',
   },
   logo: {
-    nome: "Logotipo",
+    nome: "Logotipo / Título do topo",
     explica:
-      "O título (<h2>) que identifica o nome do projeto no topo da página. Usa uma fonte de destaque (font-family), tamanho maior (font-size) e peso negrito (font-weight: 700).",
+      "O título (<h2>) que identifica o nome do site no cabeçalho. Usa font-size maior, font-weight: bold e color de destaque.",
   },
   nav: {
     nome: "Menu de navegação",
     explica:
-      "Uma <div> com a classe .menu que agrupa os links principais do site. Aplicando display: flex e gap, os links ficam alinhados lado a lado com um espaçamento uniforme entre eles.",
+      'Uma <div> que agrupa os links (<a>) do menu. Cada link usa href="#nome-da-secao" para rolar até a seção escolhida.',
   },
   link: {
     nome: "Link do menu",
@@ -105,9 +107,9 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
       "Um link (<a>) estilizado como botão de chamada para ação. A combinação de background-color, color contrastante, padding interno e border-radius cria a aparência de botão clicável.",
   },
   grid: {
-    nome: "Grade de colunas (Grid)",
+    nome: "Bloco de colunas",
     explica:
-      "Uma <div> com display: grid e grid-template-columns que organiza os elementos filhos automaticamente em colunas lado a lado, separadas pela propriedade gap.",
+      "Uma <div> que agrupa colunas ou caixas lado a lado (usando float: left com width em porcentagem, como ensinado na Aula 4).",
   },
   card: {
     nome: "Cartão (Card)",
@@ -120,14 +122,24 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
       "Uma <div> que agrupa textos, títulos e botões dentro de uma seção, controlando a largura máxima (max-width) para manter as linhas confortáveis de ler.",
   },
   stat: {
-    nome: "Destaque estatístico",
+    nome: "Destaque de dado",
     explica:
-      "Uma <div> que coloca em evidência um número ou dado importante sobre a ODS, centralizando o número grande (<h3>) e sua descrição (<p>).",
+      "Uma <div> que coloca em evidência um número ou dado importante sobre a ODS, usando largura (width), alinhamento (text-align) e cores de destaque.",
+  },
+  list: {
+    nome: "Lista (<ul> / <ol>)",
+    explica:
+      "A tag <ul> cria uma lista com marcadores (bolinhas) e a tag <ol> cria uma lista numerada (1, 2, 3...). Dentro dela colocamos os itens usando a tag <li>.",
+  },
+  listitem: {
+    nome: "Item da lista (<li>)",
+    explica:
+      "A tag <li> define cada tópico dentro de uma lista <ul> ou <ol>. Usamos margin-bottom ou line-height no CSS para dar espaço entre um tópico e outro.",
   },
   footer: {
     nome: "Rodapé",
     explica:
-      "Uma <div> com a classe .rodape que encerra a página na parte inferior, apresentando os créditos do projeto com fundo escuro e texto centralizado.",
+      'O <footer> (ou <div class="rodape">) fecha a página na parte inferior com informações de autoria e créditos. Quando usamos float nas seções anteriores, aplicamos clear: both para o rodapé ficar sempre embaixo de tudo.',
   },
 };
 
@@ -175,7 +187,30 @@ export const propInfo: Record<string, string> = {
   "flex-wrap":
     "Com o valor wrap, permite que os itens do Flexbox quebrem para a linha de baixo em telas menores.",
   "box-sizing":
-    "Com border-box, faz com que padding e bordas sejam incluídos dentro da largura total do elemento.",
+    "Com border-box, faz com que padding e bordas sejam incluídos dentro da largura total (width) do elemento.",
+  float:
+    "Faz o elemento flutuar para a esquerda (left) ou direita (right), permitindo colocar caixas ou imagens lado a lado (Aula 4).",
+  clear:
+    "Proíbe que outros elementos flutuem ao lado deste bloco. O valor both faz o bloco descer para depois das colunas com float (Aula 4).",
+  position:
+    "Define o tipo de posicionamento do elemento: static (normal), relative (relativo à posição inicial), absolute ou fixed (Aula 4).",
+  top: "Define a distância do topo em elementos posicionados com position.",
+  bottom: "Define a distância da base em elementos posicionados com position.",
+  left: "Define a distância da esquerda em elementos posicionados com position.",
+  right: "Define a distância da direita em elementos posicionados com position.",
+  "z-index": "Define a ordem de empilhamento (qual caixa fica na frente quando duas se sobrepõem).",
+  "text-shadow":
+    "Adiciona uma sombra atrás das letras do texto (ex.: 2px 2px 4px #000000), destacando o título sobre imagens de fundo (Aula 3).",
+  "background-size":
+    "Controla o tamanho da imagem de fundo (cover faz a foto cobrir toda a área da div).",
+  "background-position":
+    "Controla o alinhamento da imagem de fundo (center centraliza a foto na div).",
+  "margin-left": "Espaçamento externo apenas na lateral esquerda do elemento.",
+  "margin-right": "Espaçamento externo apenas na lateral direita do elemento.",
+  "padding-left": "Espaçamento interno apenas na lateral esquerda do elemento.",
+  "padding-right": "Espaçamento interno apenas na lateral direita do elemento.",
+  "padding-top": "Espaçamento interno apenas no topo do elemento.",
+  "padding-bottom": "Espaçamento interno apenas na base do elemento.",
   opacity: "Controla a transparência do elemento (de 0 invisível até 1 totalmente visível).",
 };
 
@@ -293,12 +328,14 @@ export function toCss(n: N, overridesOrStyle?: Overrides | Style): string {
 
 /**
  * Gera a folha de estilos completa (`style.css`) de um site-modelo inteiro,
- * incluindo o reset básico (`box-sizing: border-box` e margens de títulos/parágrafos)
- * e todas as classes CSS que constroem a página.
+ * incluindo o reset básico (`box-sizing: border-box` e margens de títulos/parágrafos),
+ * todas as classes CSS que constroem a página e a `@media screen and (max-width: 800px)`
+ * de responsividade ensinada na Aula 5.
  */
 export function toFullSiteCss(rootNode: N, overrides: Overrides = {}): string {
   const reset = `/* Regras gerais da página */\n* {\n  box-sizing: border-box;\n}\n\nh1, h2, h3, p {\n  margin-top: 0;\n}`;
-  return `${reset}\n\n${toCss(rootNode, overrides)}`;
+  const mediaQuery = `/* Responsividade para celulares e telas até 800px (Aula 5) */\n@media screen and (max-width: 800px) {\n  div, img {\n    float: none;\n    width: 100%;\n    margin-left: 0px;\n    margin-right: 0px;\n  }\n}`;
+  return `${reset}\n\n${toCss(rootNode, overrides)}\n\n${mediaQuery}`;
 }
 
 /**

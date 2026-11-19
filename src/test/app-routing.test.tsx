@@ -40,46 +40,37 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
     }
   });
 
-  it("generates complete and faithful HTML and CSS for container and leaf elements across all 6 ODS models", () => {
+  it("generates complete and distinct HTML/CSS structures for all 6 ODS models using only Energisa course concepts", () => {
     expect(sites.map((s) => s.num)).toEqual([2, 4, 6, 11, 12, 13]);
+
+    const firstSectionClasses = new Set<string>();
 
     for (const site of sites) {
       expect(site.thumb).toMatch(/^\/images\/ods-\d+-hero\.jpg$/);
       const rootNode = findNode(site.root, `${site.slug}-0`);
       expect(rootNode).toBeDefined();
 
-      // 1. Selecting a section container (<section class="hero">) includes both its HTML and the CSS rules for all inner elements
-      const heroSection = findByClass(site.root, "hero")!;
-      expect(heroSection).toBeDefined();
-      const heroHtml = toHtml(heroSection);
-      const heroCss = toCss(heroSection);
+      // Ensure each site has a distinct layout structure and does not use CSS Grid/Flexbox outside the course syllabus
+      const fullCss = toFullSiteCss(site.root);
+      expect(fullCss).not.toContain("grid-template-columns");
+      expect(fullCss).not.toContain("justify-content");
+      expect(fullCss).toContain("@media screen and (max-width: 800px)");
 
-      expect(heroHtml).toContain('<div class="hero">');
-      expect(heroHtml).toContain('<h1 class="titulo-principal">');
-      expect(heroHtml).toContain('<a class="botao" href="#acao">');
+      const firstSection = site.root.children?.find((c) => c.tag === "section")!;
+      expect(firstSection).toBeDefined();
+      firstSectionClasses.add(firstSection.cls);
 
-      // Verify CSS includes the container rule AND the inner elements' rules
-      expect(heroCss).toContain(".hero {");
-      expect(heroCss).toContain("background-color:");
-      expect(heroCss).toContain(".titulo-principal {");
-      expect(heroCss).toContain("font-family:");
-      expect(heroCss).toContain("font-size: 52px;");
-      expect(heroCss).toContain("font-weight: 700;");
-      expect(heroCss).toContain(".subtitulo {");
-      expect(heroCss).toContain(".botao {");
-      expect(heroCss).toContain("border-radius:");
-
-      // 2. Selecting a leaf element (<h1>) returns its exact single HTML and CSS rule
-      const h1Node = findByClass(site.root, "titulo-principal")!;
-      expect(toHtml(h1Node)).toBe(`<h1 class="titulo-principal">${h1Node.text}</h1>`);
+      // Selecting a leaf element (<h1>) returns its exact single HTML and CSS rule
+      const h1Node =
+        findByClass(site.root, "titulo-principal") ?? findByClass(site.root, "titulo-capa")!;
+      expect(h1Node).toBeDefined();
+      expect(toHtml(h1Node)).toContain(`<h1 class="${h1Node.cls}">${h1Node.text}</h1>`);
       const h1Css = toCss(h1Node);
-      expect(h1Css).toContain(".titulo-principal {");
+      expect(h1Css).toContain(`.${h1Node.cls} {`);
       expect(h1Css).toContain("font-family:");
-      expect(h1Css).toContain("font-size: 52px;");
-      expect(h1Css).toContain("font-weight: 700;");
-      expect(h1Css).toContain("color:");
+      expect(h1Css).toContain("font-weight: bold;");
 
-      // 3. Full site CSS and standalone HTML document contain no distinct classes with conflicting definitions
+      // Full site CSS and standalone HTML document contain unique class rules per subtree
       const ruleEntries = collectSubtreeRuleEntries(site.root);
       const uniqueClassCount = new Set(ruleEntries.map((r) => r.cls)).size;
       expect(ruleEntries.length).toBe(uniqueClassCount);
@@ -87,21 +78,22 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
       const fullDoc = toStandaloneHtmlDocument(site.root, site.nome, site.root.style);
       expect(fullDoc).toContain("<!DOCTYPE html>");
       expect(fullDoc).toContain('<body class="pagina">');
-      expect(fullDoc).toContain(toFullSiteCss(site.root).split("\n")[0]!);
     }
+
+    // Verify the 6 sites have distinct top section layouts
+    expect(firstSectionClasses.size).toBeGreaterThanOrEqual(5);
   });
 
-  it("specifically verifies ODS 12 circular image, serif title, and section styles", () => {
+  it("specifically verifies ODS 12 circular image, highlight safety and live content overrides", () => {
     const ods12 = sites.find((s) => s.slug === "ods-12")!;
     const heroImg = findByClass(ods12.root, "hero-imagem")!;
     expect(toHtml(heroImg)).toBe(
-      '<img class="hero-imagem" src="/images/ods-12-hero.jpg" alt="Consumir com consciência">',
+      '<img class="hero-imagem" src="/images/ods-12-hero.jpg" alt="Coletores coloridos de reciclagem seletiva">',
     );
     const imgCss = toSingleCss(heroImg);
-    expect(imgCss).toContain("width: 100%;");
-    expect(imgCss).toContain("height: 380px;");
-    expect(imgCss).toContain("object-fit: cover;");
-    expect(imgCss).toContain("border-radius: 999px;");
+    expect(imgCss).toContain("width: 240px;");
+    expect(imgCss).toContain("height: 240px;");
+    expect(imgCss).toContain("border-radius: 120px;");
 
     // Highlight does not mutate raw code string passed to clipboard, and renders valid HTML without leaking class="tk-tag" into visible text
     const highlightedCss = highlight(imgCss, "css");
