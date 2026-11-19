@@ -28,3 +28,4 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+- Lab ODS: site-models are data trees (src/lab/sites.ts) rendered by one renderer; HTML/CSS shown is generated from the same tree so code always matches the preview.
