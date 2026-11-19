@@ -103,9 +103,20 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
     expect(imgCss).toContain("object-fit: cover;");
     expect(imgCss).toContain("border-radius: 999px;");
 
-    // Highlight does not mutate raw code string passed to clipboard
-    const highlighted = highlight(imgCss, "css");
-    expect(highlighted).toContain("tk-tag");
+    // Highlight does not mutate raw code string passed to clipboard, and renders valid HTML without leaking class="tk-tag" into visible text
+    const highlightedCss = highlight(imgCss, "css");
+    expect(highlightedCss).toContain("tk-tag");
     expect(imgCss).not.toContain("tk-tag");
+
+    const heroSection = findByClass(ods12.root, "hero")!;
+    const heroHtml = toHtml(heroSection);
+    const highlightedHtml = highlight(heroHtml, "html");
+    expect(highlightedHtml).not.toContain("&lt;class=");
+    const strippedText = highlightedHtml
+      .replace(/<[^>]+>/g, "")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&");
+    expect(strippedText).toBe(heroHtml);
   });
 });

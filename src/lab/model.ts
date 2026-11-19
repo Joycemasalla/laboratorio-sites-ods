@@ -343,11 +343,11 @@ export function highlight(code: string, lang: "html" | "css"): string {
   const e = esc(code);
   if (lang === "html")
     return e
-      .replace(/(&lt;\/?)([a-z0-9!]+)/gi, '$1<span class="tk-tag">$2</span>')
       .replace(
         /([a-z-]+)=("[^"]*")/gi,
         '<span class="tk-attr">$1</span>=<span class="tk-str">$2</span>',
-      );
+      )
+      .replace(/(&lt;\/?)([a-z0-9!]+)/gi, '$1<span class="tk-tag">$2</span>');
   return e
     .replace(/^(\/\*.*\*\/)$/gm, '<span class="tk-str">$1</span>')
     .replace(/^(\.[\w-]+|body|\*|h1, h2, h3, p)/gm, '<span class="tk-tag">$1</span>')
