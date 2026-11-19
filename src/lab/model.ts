@@ -39,47 +39,47 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   page: {
     nome: "Página",
     explica:
-      "O <body> é o corpo principal que envolve todo o conteúdo visível do site. No CSS, a classe .pagina define a fonte padrão, a cor de fundo, a cor do texto e remove as margens padrão do navegador (margin: 0).",
+      "O <body> é o corpo principal que envolve todo o conteúdo visível do site. No CSS, a classe .pagina define a fonte padrão, a cor de fundo, a cor do texto e remove as margens padrão do navegador (margin: 0px).",
   },
   header: {
     nome: "Cabeçalho",
     explica:
-      "O <header> fica no topo do site e apresenta o logotipo e o menu de navegação. Com display: flex e justify-content: space-between, o logotipo fica à esquerda e o menu à direita.",
+      "Uma <div> com a classe .cabecalho que fica no topo do site e organiza o logotipo e o menu de navegação. Com display: flex e justify-content: space-between, o logotipo fica à esquerda e o menu à direita.",
   },
   logo: {
     nome: "Logotipo",
     explica:
-      "O logotipo identifica a marca ou o nome do projeto no topo da página. Usa uma fonte de destaque (font-family), tamanho maior (font-size) e peso negrito (font-weight: 700).",
+      "O título (<h2>) que identifica o nome do projeto no topo da página. Usa uma fonte de destaque (font-family), tamanho maior (font-size) e peso negrito (font-weight: 700).",
   },
   nav: {
     nome: "Menu de navegação",
     explica:
-      "A tag semântica <nav> agrupa os links principais do site. Aplicando display: flex e gap, os links ficam alinhados lado a lado com um espaçamento uniforme entre eles.",
+      "Uma <div> com a classe .menu que agrupa os links principais do site. Aplicando display: flex e gap, os links ficam alinhados lado a lado com um espaçamento uniforme entre eles.",
   },
   link: {
     nome: "Link do menu",
     explica:
-      "A tag <a> cria um link clicável. O atributo href indica o destino (por exemplo, #problema rola a página até a seção correspondente), e text-decoration: none remove o sublinhado padrão.",
+      "A tag <a> cria um link clicável. O atributo href indica o destino (por exemplo, #problema leva até a seção correspondente), e text-decoration: none remove o sublinhado padrão.",
   },
   section: {
     nome: "Seção",
     explica:
-      "A tag <section> divide a página em blocos temáticos (como Apresentação/Hero, Problema, Dados, Cards, Soluções e Chamada para Ação). O padding cria o respiro interno para o conteúdo não encostar nas bordas.",
+      "Uma <div> que divide a página em blocos temáticos (como Apresentação/Hero, Problema, Dados, Cards, Soluções e Chamada para Ação). O padding cria o espaço interno para o conteúdo não encostar nas bordas.",
   },
   h1: {
     nome: "Título principal",
     explica:
-      "O <h1> é o título mais importante da página. Deve existir apenas um <h1> por página para que visitantes, leitores de tela e mecanismos de busca entendam imediatamente o tema principal.",
+      "O <h1> é o título mais importante da página. Deve existir apenas um <h1> por página para destacar o tema principal.",
   },
   h2: {
     nome: "Título de seção",
     explica:
-      "O <h2> identifica o título de cada seção da página, mantendo a hierarquia semântica de títulos (h1 → h2 → h3).",
+      "O <h2> identifica o título de cada seção da página, mantendo a hierarquia de títulos (h1 → h2 → h3).",
   },
   h3: {
     nome: "Título de item / card",
     explica:
-      "O <h3> (ou destaque numérico) introduz um card, item de solução ou indicador estatístico dentro de uma seção.",
+      "O <h3> introduz o título de um card, item de solução ou número em destaque dentro de uma seção.",
   },
   p: {
     nome: "Parágrafo",
@@ -89,37 +89,37 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   img: {
     nome: "Imagem",
     explica:
-      "A tag <img> exibe uma fotografia ou ilustração. O atributo src aponta para o arquivo da imagem, o alt descreve a imagem para acessibilidade, e object-fit: cover ajusta a foto sem distorcer a proporção.",
+      "A tag <img> exibe uma fotografia ou ilustração. O atributo src aponta para o arquivo da imagem, o alt descreve a imagem, e object-fit: cover ajusta a foto sem distorcer a proporção.",
   },
   button: {
     nome: "Botão de ação",
     explica:
-      "Um link estilizado como botão de chamada para ação (CTA). A combinação de background-color, color contrastante, padding interno e border-radius cria a aparência de botão clicável.",
+      "Um link (<a>) estilizado como botão de chamada para ação. A combinação de background-color, color contrastante, padding interno e border-radius cria a aparência de botão clicável.",
   },
   grid: {
     nome: "Grade de colunas (Grid)",
     explica:
-      "Um contêiner com display: grid e grid-template-columns que organiza os elementos filhos automaticamente em colunas responsivas lado a lado, separadas pela propriedade gap.",
+      "Uma <div> com display: grid e grid-template-columns que organiza os elementos filhos automaticamente em colunas lado a lado, separadas pela propriedade gap.",
   },
   card: {
     nome: "Cartão (Card)",
     explica:
-      "Um bloco visual (<article> ou <div>) que agrupa um título e uma explicação curta. Usa cor de fundo, padding interno, bordas arredondadas ou borda lateral colorida e sombra (box-shadow) para se destacar.",
+      "Uma <div> que agrupa um título (<h3>) e um parágrafo (<p>). Usa cor de fundo, padding interno, bordas arredondadas ou borda colorida e sombra (box-shadow) para se destacar.",
   },
   column: {
     nome: "Coluna de conteúdo",
     explica:
-      "Uma <div> que agrupa textos, títulos e botões dentro de uma seção ou layout de duas colunas, controlando a largura máxima (max-width) para manter as linhas confortáveis de ler.",
+      "Uma <div> que agrupa textos, títulos e botões dentro de uma seção, controlando a largura máxima (max-width) para manter as linhas confortáveis de ler.",
   },
   stat: {
     nome: "Destaque estatístico",
     explica:
-      "Um bloco que coloca em evidência um número ou dado importante sobre a ODS, centralizando o número grande e sua descrição.",
+      "Uma <div> que coloca em evidência um número ou dado importante sobre a ODS, centralizando o número grande (<h3>) e sua descrição (<p>).",
   },
   footer: {
     nome: "Rodapé",
     explica:
-      "O <footer> encerra a página na parte inferior, apresentando os créditos do projeto, ano e informações institucionais com fundo contrastante.",
+      "Uma <div> com a classe .rodape que encerra a página na parte inferior, apresentando os créditos do projeto com fundo escuro e texto centralizado.",
   },
 };
 

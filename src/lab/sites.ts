@@ -123,7 +123,7 @@ function build(c: Content): N {
       { text: txt, href: "#acao" },
     );
   const section = (cls: string, style: Style, children: N[]) =>
-    mk("section", "section", cls, "Seção", { padding: "72px 8%", ...style }, { children });
+    mk("section", "div", cls, "Seção", { padding: "72px 8%", ...style }, { children });
 
   const heroText = [
     mk(
@@ -205,7 +205,7 @@ function build(c: Content): N {
       children: [
         mk(
           "header",
-          "header",
+          "div",
           "cabecalho",
           "Cabeçalho",
           {
@@ -222,7 +222,7 @@ function build(c: Content): N {
             children: [
               mk(
                 "logo",
-                "strong",
+                "h2",
                 "logo",
                 "Logotipo",
                 {
@@ -230,12 +230,13 @@ function build(c: Content): N {
                   "font-size": "22px",
                   "font-weight": "700",
                   color: t.primary,
+                  margin: "0px",
                 },
                 { text: c.marca },
               ),
               mk(
                 "nav",
-                "nav",
+                "div",
                 "menu",
                 "Menu",
                 { display: "flex", gap: "24px", "flex-wrap": "wrap" },
@@ -253,7 +254,15 @@ function build(c: Content): N {
                         "font-weight": "600",
                         "font-size": "15px",
                       },
-                      { text: n, href: "#" + n.toLowerCase() },
+                      {
+                        text: n,
+                        href:
+                          "#" +
+                          n
+                            .toLowerCase()
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, ""),
+                      },
                     ),
                   ),
                 },
@@ -313,15 +322,15 @@ function build(c: Content): N {
                     children: [
                       mk(
                         "h3",
-                        "strong",
+                        "h3",
                         "dado-numero",
                         "Número",
                         {
-                          display: "block",
                           "font-family": t.heading,
                           "font-size": "48px",
                           "font-weight": "700",
                           color: t.accent,
+                          "margin-top": "0px",
                           "margin-bottom": "8px",
                         },
                         { text: n },
@@ -351,7 +360,7 @@ function build(c: Content): N {
               children: c.cards.map(([h, d]) =>
                 mk(
                   "card",
-                  "article",
+                  "div",
                   "card",
                   "Card",
                   {
@@ -467,7 +476,7 @@ function build(c: Content): N {
         ]),
         mk(
           "footer",
-          "footer",
+          "div",
           "rodape",
           "Rodapé",
           {

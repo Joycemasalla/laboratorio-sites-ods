@@ -54,7 +54,7 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
       const heroHtml = toHtml(heroSection);
       const heroCss = toCss(heroSection);
 
-      expect(heroHtml).toContain('<section class="hero">');
+      expect(heroHtml).toContain('<div class="hero">');
       expect(heroHtml).toContain('<h1 class="titulo-principal">');
       expect(heroHtml).toContain('<a class="botao" href="#acao">');
 
