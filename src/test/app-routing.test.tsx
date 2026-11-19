@@ -118,5 +118,16 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
       .replace(/&gt;/g, ">")
       .replace(/&amp;/g, "&");
     expect(strippedText).toBe(heroHtml);
+
+    // Content overrides (live text and image src/alt editing) update generated HTML
+    const h1Node = findByClass(ods12.root, "titulo-principal")!;
+    const editedHtml = toHtml(heroSection, 0, {
+      [h1Node.id]: { text: "Meu Projeto Escolar ODS 12" },
+      [heroImg.id]: { src: "/images/ods-13-hero.jpg", alt: "Foto da floresta" },
+    });
+    expect(editedHtml).toContain('<h1 class="titulo-principal">Meu Projeto Escolar ODS 12</h1>');
+    expect(editedHtml).toContain(
+      '<img class="hero-imagem" src="/images/ods-13-hero.jpg" alt="Foto da floresta">',
+    );
   });
 });

@@ -227,3 +227,25 @@
   white-space: nowrap;
   pointer-events: none;
 }
+
+.lab-xray {
+  outline: 1.5px dashed oklch(0.55 0.16 250 / 70%);
+  outline-offset: -1px;
+  position: relative;
+}
+
+.lab-xray-badge {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: oklch(0.32 0.1 250 / 88%);
+  color: oklch(0.98 0 0);
+  font:
+    600 10px/1.2 "DM Sans",
+    monospace;
+  padding: 2px 6px;
+  border-radius: 4px;
+  z-index: 25;
+  white-space: nowrap;
+  pointer-events: none;
+}

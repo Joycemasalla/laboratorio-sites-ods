@@ -35,6 +35,14 @@ export type N = {
 
 export type Overrides = Record<string, Style>;
 
+export type ContentOverride = {
+  text?: string;
+  src?: string;
+  alt?: string;
+};
+
+export type ContentOverrides = Record<string, ContentOverride>;
+
 export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   page: {
     nome: "Página",
@@ -182,15 +190,23 @@ export function toReact(s: Style): React.CSSProperties {
 const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /**
- * Gera o código HTML limpo e indentado para um elemento (e seus filhos).
+ * Gera o código HTML limpo e indentado para um elemento (e seus filhos),
+ * aplicando eventuais alterações de texto ou imagem feitas na aba Experimente.
  */
-export function toHtml(n: N, depth = 0): string {
+export function toHtml(n: N, depth = 0, contentOverrides: ContentOverrides = {}): string {
   const pad = "  ".repeat(depth);
+  const co = contentOverrides[n.id];
+  const text = co?.text ?? n.text ?? "";
+  const src = co?.src ?? n.src;
+  const alt = co?.alt ?? n.alt ?? "";
+
   let attrs = ` class="${n.cls}"`;
   if (n.href) attrs += ` href="${n.href}"`;
-  if (n.tag === "img") return `${pad}<img${attrs} src="${n.src}" alt="${n.alt ?? ""}">`;
-  if (!n.children?.length) return `${pad}<${n.tag}${attrs}>${esc(n.text ?? "")}</${n.tag}>`;
-  return `${pad}<${n.tag}${attrs}>\n${n.children.map((c) => toHtml(c, depth + 1)).join("\n")}\n${pad}</${n.tag}>`;
+  if (n.tag === "img") return `${pad}<img${attrs} src="${src}" alt="${esc(alt)}">`;
+  if (!n.children?.length) return `${pad}<${n.tag}${attrs}>${esc(text)}</${n.tag}>`;
+  return `${pad}<${n.tag}${attrs}>\n${n.children
+    .map((c) => toHtml(c, depth + 1, contentOverrides))
+    .join("\n")}\n${pad}</${n.tag}>`;
 }
 
 /**
@@ -295,6 +311,7 @@ export function toStandaloneHtmlDocument(
   siteTitle: string,
   pageStyle: Style,
   overrides: Overrides = {},
+  contentOverrides: ContentOverrides = {},
 ): string {
   const isFullPage = n.tag === "body";
   const cssCode = isFullPage
@@ -306,8 +323,8 @@ export function toStandaloneHtmlDocument(
         .join("\n")}\n}\n\nh1, h2, h3, p {\n  margin-top: 0;\n}\n\n${toCss(n, overrides)}`;
 
   const bodyHtml = isFullPage
-    ? (n.children ?? []).map((c) => toHtml(c, 2)).join("\n")
-    : toHtml(n, 2);
+    ? (n.children ?? []).map((c) => toHtml(c, 2, contentOverrides)).join("\n")
+    : toHtml(n, 2, contentOverrides);
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">

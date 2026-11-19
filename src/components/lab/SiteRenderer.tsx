@@ -1,25 +1,39 @@
 import type { ElementType, MouseEvent } from "react";
-import { kindInfo, toReact, type N, type Style } from "@/lab/model";
-
-export type Overrides = Record<string, Style>;
+import { kindInfo, toReact, type ContentOverrides, type N, type Overrides } from "@/lab/model";
 
 interface SiteRendererProps {
   n: N;
   sel: string | undefined;
   ov: Overrides;
+  contentOv?: ContentOverrides;
+  xray?: boolean;
   onSel: (id: string) => void;
 }
 
-export function SiteRenderer({ n, sel, ov, onSel }: SiteRendererProps) {
+export function SiteRenderer({
+  n,
+  sel,
+  ov,
+  contentOv = {},
+  xray = false,
+  onSel,
+}: SiteRendererProps) {
   const Tag = (n.tag === "body" ? "div" : n.tag) as ElementType;
   const isSel = sel === n.id;
+  const isDivBox = n.tag === "div" || n.tag === "body";
+  const showXray = xray && isDivBox;
+
+  const co = contentOv[n.id];
+  const displayText = co?.text ?? n.text;
+  const displaySrc = co?.src ?? n.src;
+  const displayAlt = co?.alt ?? n.alt;
 
   const selectNode = () => {
     onSel(n.id);
   };
 
   const props = {
-    className: `lab-el ${isSel ? "lab-sel" : ""}`,
+    className: `lab-el ${isSel ? "lab-sel" : ""} ${showXray ? "lab-xray" : ""}`.trim(),
     style: toReact({ ...n.style, ...ov[n.id] }),
     onClick: (e: MouseEvent) => {
       e.preventDefault();
@@ -32,11 +46,16 @@ export function SiteRenderer({ n, sel, ov, onSel }: SiteRendererProps) {
     <span className="lab-badge">{`<${n.tag === "body" ? "body" : n.tag}> ${kindInfo[n.kind].nome}`}</span>
   ) : null;
 
+  const xrayBadge =
+    showXray && !isSel ? (
+      <span className="lab-xray-badge">{`<${n.tag === "body" ? "body" : "div"} class="${n.cls}">`}</span>
+    ) : null;
+
   if (n.tag === "img") {
     return (
       <span style={{ position: "relative", display: "block" }}>
         {badge}
-        <img {...props} src={n.src} alt={n.alt} />
+        <img {...props} src={displaySrc} alt={displayAlt} />
       </span>
     );
   }
@@ -44,9 +63,18 @@ export function SiteRenderer({ n, sel, ov, onSel }: SiteRendererProps) {
   return (
     <Tag {...props} href={n.href}>
       {badge}
-      {n.text}
+      {xrayBadge}
+      {displayText}
       {n.children?.map((c) => (
-        <SiteRenderer key={c.id} n={c} sel={sel} ov={ov} onSel={onSel} />
+        <SiteRenderer
+          key={c.id}
+          n={c}
+          sel={sel}
+          ov={ov}
+          contentOv={contentOv}
+          xray={xray}
+          onSel={onSel}
+        />
       ))}
     </Tag>
   );

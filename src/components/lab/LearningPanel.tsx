@@ -7,10 +7,13 @@ import {
   toHtml,
   toSingleCss,
   toStandaloneHtmlDocument,
+  type ContentOverride,
+  type ContentOverrides,
   type N,
   type Overrides,
   type Style,
 } from "@/lab/model";
+import { BoxModelDiagram } from "./BoxModelDiagram";
 import { CodeBox } from "./CodeBox";
 import { LabControls } from "./LabControls";
 
@@ -32,7 +35,9 @@ interface LearningPanelProps {
   onClose: () => void;
   onSelectNode: (id: string) => void;
   overrides: Overrides;
+  contentOverrides: ContentOverrides;
   onSetOverride: (nodeId: string, prop: string, value: string) => void;
+  onSetContentOverride: (nodeId: string, patch: ContentOverride) => void;
   onResetOverride: (nodeId: string) => void;
 }
 
@@ -45,20 +50,23 @@ export function LearningPanel({
   onClose,
   onSelectNode,
   overrides,
+  contentOverrides,
   onSetOverride,
+  onSetContentOverride,
   onResetOverride,
 }: LearningPanelProps) {
   const [showFullHtml, setShowFullHtml] = useState(false);
   const [onlyThisRule, setOnlyThisRule] = useState(false);
 
   const nodeOverrides: Style = overrides[node.id] ?? {};
+  const nodeContentOverrides: ContentOverride = contentOverrides[node.id] ?? {};
   const hasChildren = Boolean(node.children && node.children.length > 0);
   const ruleEntries = collectSubtreeRuleEntries(node, overrides);
   const currentMergedStyle: Style = { ...node.style, ...nodeOverrides };
 
   const htmlCode = showFullHtml
-    ? toStandaloneHtmlDocument(node, siteTitle, rootNode.style, overrides)
-    : toHtml(node);
+    ? toStandaloneHtmlDocument(node, siteTitle, rootNode.style, overrides, contentOverrides)
+    : toHtml(node, 0, contentOverrides);
 
   const cssCode =
     onlyThisRule || !hasChildren ? toSingleCss(node, currentMergedStyle) : toCss(node, overrides);
@@ -120,6 +128,10 @@ export function LearningPanel({
                 espaçamentos.
               </p>
             </div>
+
+            {/* Diagrama Visual do Box Model (Margin, Border, Padding e Conteúdo) */}
+            <BoxModelDiagram style={currentMergedStyle} tag={node.tag} cls={node.cls} />
+
             {hasChildren && (
               <div className="rounded-lg border p-3">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -188,6 +200,10 @@ export function LearningPanel({
               </div>
             )}
             <CodeBox code={cssCode} lang="css" />
+
+            {/* Diagrama Visual do Box Model também na aba CSS para referência rápida */}
+            <BoxModelDiagram style={currentMergedStyle} tag={node.tag} cls={node.cls} />
+
             <div className="space-y-4">
               {(onlyThisRule || !hasChildren ? ruleEntries.slice(0, 1) : ruleEntries).map(
                 (entry) => (
@@ -219,7 +235,9 @@ export function LearningPanel({
           <LabControls
             n={node}
             ov={nodeOverrides}
+            contentOv={nodeContentOverrides}
             set={(k, v) => onSetOverride(node.id, k, v)}
+            setContent={(patch) => onSetContentOverride(node.id, patch)}
             reset={() => onResetOverride(node.id)}
           />
         )}
