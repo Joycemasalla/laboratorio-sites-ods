@@ -1557,7 +1557,7 @@ function buildOds11(): N {
                 },
                 { text: "Três pilares de uma cidade sustentável" },
               ),
-              ...[
+              ...([
                 [
                   "1. Mobilidade Limpa",
                   "Ônibus elétricos, calçadas acessíveis e ciclovias conectando os bairros diminuem o trânsito e a poluição.",
@@ -1576,7 +1576,7 @@ function buildOds11(): N {
                   "#fbe4d8",
                   "#b8541a",
                 ],
-              ].map(([tit, txt, bg, borderCol]) =>
+              ] as const).map(([tit, txt, bg, borderCol]) =>
                 mk(
                   "card",
                   "div",
