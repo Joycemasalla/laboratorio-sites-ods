@@ -56,9 +56,9 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
       expect(fullCss).not.toContain("justify-content");
       expect(fullCss).toContain("@media screen and (max-width: 800px)");
 
-      const firstSection = site.root.children?.find((c) => c.tag === "section")!;
+      const firstSection = site.root.children?.find((c) => c.tag === "section");
       expect(firstSection).toBeDefined();
-      firstSectionClasses.add(firstSection.cls);
+      firstSectionClasses.add(firstSection!.cls);
 
       // Selecting a leaf element (<h1>) returns its exact single HTML and CSS rule
       const h1Node =

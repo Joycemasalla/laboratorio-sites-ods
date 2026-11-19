@@ -27,12 +27,12 @@ export type N = {
   tag: string;
   cls: string;
   label: string;
-  text?: string;
-  src?: string;
-  alt?: string;
-  href?: string;
+  text?: string | undefined;
+  src?: string | undefined;
+  alt?: string | undefined;
+  href?: string | undefined;
   style: Style;
-  children?: N[];
+  children?: N[] | undefined;
 };
 
 export type Overrides = Record<string, Style>;
