@@ -31,3 +31,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Relatórios internos de auditoria e ativos (mantidos apenas localmente)
+COMPLIANCE_REPORT.md
+ASSETS.md
