@@ -58,12 +58,7 @@ export function SiteRenderer({
     ) : null;
 
   if (n.tag === "img") {
-    return (
-      <span style={{ position: "relative", display: "block" }}>
-        {badge}
-        <img {...props} src={displaySrc} alt={displayAlt} />
-      </span>
-    );
+    return <img {...props} src={displaySrc} alt={displayAlt} />;
   }
 
   return (

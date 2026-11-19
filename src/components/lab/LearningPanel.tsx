@@ -1,9 +1,11 @@
 import { useState } from "react";
 import {
   collectSubtreeRuleEntries,
+  findExternalAnchorsInSubtree,
   kindInfo,
   propInfo,
   toCss,
+  toFullSiteCss,
   toHtml,
   toSingleCss,
   toStandaloneHtmlDocument,
@@ -58,18 +60,26 @@ export function LearningPanel({
   const [showFullHtml, setShowFullHtml] = useState(false);
   const [onlyThisRule, setOnlyThisRule] = useState(false);
 
+  const isRootPage = node.id === rootNode.id || node.tag === "body";
+  const effectiveFullHtml = isRootPage ? true : showFullHtml;
+
   const nodeOverrides: Style = overrides[node.id] ?? {};
   const nodeContentOverrides: ContentOverride = contentOverrides[node.id] ?? {};
   const hasChildren = Boolean(node.children && node.children.length > 0);
   const ruleEntries = collectSubtreeRuleEntries(node, overrides);
   const currentMergedStyle: Style = { ...node.style, ...nodeOverrides };
+  const externalAnchors = !effectiveFullHtml ? findExternalAnchorsInSubtree(node, rootNode) : [];
 
-  const htmlCode = showFullHtml
+  const htmlCode = effectiveFullHtml
     ? toStandaloneHtmlDocument(node, siteTitle, rootNode.style, overrides, contentOverrides)
     : toHtml(node, 0, contentOverrides);
 
   const cssCode =
-    onlyThisRule || !hasChildren ? toSingleCss(node, currentMergedStyle) : toCss(node, overrides);
+    onlyThisRule || !hasChildren
+      ? toSingleCss(node, currentMergedStyle)
+      : isRootPage
+        ? toFullSiteCss(node, overrides)
+        : toCss(node, overrides);
 
   return (
     <aside
@@ -116,7 +126,7 @@ export function LearningPanel({
       <div className="flex-1 overflow-auto p-4">
         {tab === "entenda" && (
           <div className="space-y-3 text-sm leading-relaxed text-foreground">
-            <p>{kindInfo[node.kind].explica}</p>
+            <p>{node.explica ?? kindInfo[node.kind].explica}</p>
             <div className="rounded-lg bg-secondary p-3 text-secondary-foreground">
               <p>
                 Tag HTML: <code>&lt;{node.tag === "body" ? "body" : node.tag}&gt;</code>
@@ -170,25 +180,67 @@ export function LearningPanel({
         {tab === "html" && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-muted-foreground">
-                {showFullHtml
-                  ? "Arquivo index.html completo com HTML + CSS juntos, pronto para salvar e abrir no navegador."
-                  : "Estrutura HTML deste elemento e de tudo que está dentro dele."}
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowFullHtml((v) => !v)}
-                className="rounded-md border bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
-              >
-                {showFullHtml ? "Ver apenas o trecho HTML" : "Ver página HTML + CSS pronta"}
-              </button>
+              <div className="space-y-1">
+                <span
+                  className={`inline-block rounded px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${
+                    effectiveFullHtml
+                      ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-300"
+                      : "bg-amber-500/15 text-amber-900 dark:text-amber-300"
+                  }`}
+                >
+                  {effectiveFullHtml
+                    ? "📄 Documento HTML5 Completo (<!DOCTYPE html>)"
+                    : "🧩 Fragmento HTML do elemento selecionado"}
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  {effectiveFullHtml
+                    ? "Arquivo index.html completo com <!DOCTYPE html>, <head>, <style> e <body>, pronto para salvar e abrir no navegador."
+                    : "Mostrando apenas o trecho HTML deste componente. Para testar sozinho no navegador ou ver as demais seções, use o botão ao lado."}
+                </p>
+              </div>
+              {!isRootPage && (
+                <button
+                  type="button"
+                  onClick={() => setShowFullHtml((v) => !v)}
+                  className="rounded-md border bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
+                >
+                  {showFullHtml ? "Ver apenas o trecho HTML" : "Ver documento HTML5 completo"}
+                </button>
+              )}
             </div>
             <CodeBox code={htmlCode} lang="html" />
-            {!showFullHtml && (
+            {!effectiveFullHtml && externalAnchors.length > 0 && (
+              <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-2.5 text-xs text-foreground">
+                <p className="font-semibold">🔗 Sobre os links de âncora deste trecho:</p>
+                <p className="mt-1 text-muted-foreground">
+                  {externalAnchors.map((a, idx) => (
+                    <span key={a.targetId}>
+                      {idx > 0 ? ", " : ""}
+                      <code>href="{a.href}"</code> aponta para{" "}
+                      <code>
+                        &lt;{a.targetTag ?? "section"} id="{a.targetId}"
+                        {a.targetCls ? ` class="${a.targetCls}"` : ""}&gt;
+                      </code>
+                    </span>
+                  ))}{" "}
+                  que fica em outra seção desta página. Clique em{" "}
+                  <button
+                    type="button"
+                    onClick={() => onSelectNode(rootNode.id)}
+                    className="font-semibold text-primary underline"
+                  >
+                    Ver código do site completo
+                  </button>{" "}
+                  para ver os links e as seções com seus <code>id="..."</code> juntos!
+                </p>
+              </div>
+            )}
+            {!effectiveFullHtml && (
               <p className="rounded-lg border bg-muted/40 p-2.5 text-xs text-muted-foreground">
-                Dica: Para reproduzir exatamente este visual no seu computador, copie este HTML e
-                combine com o código da aba <b>CSS</b>, ou clique em{" "}
-                <b>"Ver página HTML + CSS pronta"</b> acima.
+                Dica: Como este é um <b>fragmento de elemento</b>, ele deve ficar dentro do{" "}
+                <code>&lt;body class="pagina"&gt;</code> junto com o código da aba <b>CSS</b>. Se
+                quiser copiar um arquivo pronto para rodar sozinho, clique em{" "}
+                <b>"Ver documento HTML5 completo"</b> acima.
               </p>
             )}
           </div>

@@ -19,6 +19,7 @@ export type Kind =
   | "stat"
   | "list"
   | "listitem"
+  | "clearfix"
   | "footer";
 
 export type N = {
@@ -28,6 +29,7 @@ export type N = {
   tag: string;
   cls: string;
   label: string;
+  explica?: string | undefined;
   text?: string | undefined;
   src?: string | undefined;
   alt?: string | undefined;
@@ -55,7 +57,7 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   header: {
     nome: "Cabeçalho",
     explica:
-      'O <header> (ou <div class="cabecalho">) fica no topo do site e apresenta o título/logotipo e os links de navegação para as seções da página.',
+      "O <header> fica no topo do site e apresenta o título/logotipo e o bloco de links de navegação para as seções da página.",
   },
   logo: {
     nome: "Logotipo / Título do topo",
@@ -65,17 +67,17 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   nav: {
     nome: "Menu de navegação",
     explica:
-      'Uma <div> que agrupa os links (<a>) do menu. Cada link usa href="#nome-da-secao" para rolar até a seção escolhida.',
+      'Uma <div> que agrupa os links (<a>) do menu. Cada link usa href="#id-da-secao" para rolar até a seção que possui o atributo id="id-da-secao".',
   },
   link: {
     nome: "Link do menu",
     explica:
-      "A tag <a> cria um link clicável. O atributo href indica o destino (por exemplo, #problema leva até a seção correspondente), e text-decoration: none remove o sublinhado padrão.",
+      'A tag <a> cria um link clicável. O atributo href indica o destino (por exemplo, #problema leva até a seção com id="problema"), e text-decoration: none remove o sublinhado padrão.',
   },
   section: {
     nome: "Seção",
     explica:
-      "Uma <div> que divide a página em blocos temáticos (como Apresentação/Hero, Problema, Dados, Cards, Soluções e Chamada para Ação). O padding cria o espaço interno para o conteúdo não encostar nas bordas.",
+      "A tag <section> divide a página em blocos temáticos (como Capa, Dados, Iniciativas, Soluções e Metas). O padding cria o espaço interno para o conteúdo não encostar nas bordas.",
   },
   h1: {
     nome: "Título principal",
@@ -100,12 +102,12 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   img: {
     nome: "Imagem",
     explica:
-      "A tag <img> exibe uma fotografia ou ilustração. O atributo src aponta para o arquivo da imagem, o alt descreve a imagem, e object-fit: cover ajusta a foto sem distorcer a proporção.",
+      "A tag <img> exibe uma fotografia ou ilustração. O atributo src aponta para o arquivo da imagem, o alt descreve a imagem para acessibilidade, e object-fit: cover ajusta a foto no espaço definido (width e height) sem achatar ou esticar a imagem.",
   },
   button: {
     nome: "Botão de ação",
     explica:
-      "Um link (<a>) estilizado como botão de chamada para ação. A combinação de background-color, color contrastante, padding interno e border-radius cria a aparência de botão clicável.",
+      "Um link (<a>) estilizado como botão de chamada para ação. Usamos display: inline-block para que o link aceite padding (espaçamento interno), junto com background-color, color contrastante e text-decoration: none.",
   },
   grid: {
     nome: "Bloco de colunas",
@@ -115,17 +117,17 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
   card: {
     nome: "Cartão (Card)",
     explica:
-      "Uma <div> que agrupa um título (<h3>) e um parágrafo (<p>). Usa cor de fundo, padding interno, bordas arredondadas ou borda colorida e sombra (box-shadow) para se destacar.",
+      "Uma <div> que agrupa um título (<h3>), um parágrafo (<p>) e opcionalmente uma imagem (<img>). Usa background-color, padding interno e border para destacar cada item.",
   },
   column: {
     nome: "Coluna de conteúdo",
     explica:
-      "Uma <div> que agrupa textos, títulos e botões dentro de uma seção, controlando a largura máxima (max-width) para manter as linhas confortáveis de ler.",
+      "Uma <div> que agrupa textos, títulos e botões em uma coluna (por exemplo, com float: left ou float: right e width em porcentagem para ficar ao lado de outra coluna ou imagem).",
   },
   stat: {
     nome: "Destaque de dado",
     explica:
-      "Uma <div> que coloca em evidência um número ou dado importante sobre a ODS, usando largura (width), alinhamento (text-align) e cores de destaque.",
+      "Uma <div> que coloca em evidência um número ou indicador importante sobre a ODS, usando largura (width), alinhamento (text-align), borda e cores de contraste.",
   },
   list: {
     nome: "Lista (<ul> / <ol>)",
@@ -137,10 +139,15 @@ export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
     explica:
       "A tag <li> define cada tópico dentro de uma lista <ul> ou <ol>. Usamos margin-bottom ou line-height no CSS para dar espaço entre um tópico e outro.",
   },
+  clearfix: {
+    nome: "Limpar flutuação (clear: both)",
+    explica:
+      'Uma <div class="limpar-flutuacao"> vazia colocada logo depois de colunas ou imagens que usam float: left ou float: right. No CSS, a propriedade clear: both avisa ao navegador que o fluxo lado a lado terminou, fazendo com que a seção pai envolva toda a altura das colunas flutuantes e impedindo que a próxima seção suba no lugar errado (Aula 4).',
+  },
   footer: {
     nome: "Rodapé",
     explica:
-      'O <footer> (ou <div class="rodape">) fecha a página na parte inferior com informações de autoria e créditos. Quando usamos float nas seções anteriores, aplicamos clear: both para o rodapé ficar sempre embaixo de tudo.',
+      "O <footer> fecha a página na parte inferior com informações de autoria e créditos do projeto. Quando usamos float nas seções anteriores, aplicamos clear: both para garantir que o rodapé fique sempre embaixo de tudo.",
   },
 };
 
@@ -342,9 +349,62 @@ export function toFullSiteCss(rootNode: N, overrides: Overrides = {}): string {
 }
 
 /**
- * Gera um documento HTML5 completo e autossuficiente (com Google Fonts e CSS)
- * para um elemento/seção ou para o site inteiro, pronto para o aluno salvar como
- * `index.html` e abrir no navegador com visual 100% idêntico à prévia.
+ * Coleta as âncoras internas (`href="#..."`) presentes em uma subárvore
+ * e verifica quais apontam para IDs (`id="..."`) fora dessa subárvore.
+ */
+export function findExternalAnchorsInSubtree(
+  node: N,
+  rootNode: N,
+): Array<{
+  href: string;
+  targetId: string;
+  targetTag?: string | undefined;
+  targetCls?: string | undefined;
+}> {
+  const subtreeIds = new Set<string>();
+  const hrefs: string[] = [];
+
+  function walkSubtree(curr: N) {
+    if (curr.htmlId) subtreeIds.add(curr.htmlId);
+    if (curr.href?.startsWith("#")) hrefs.push(curr.href.slice(1));
+    for (const c of curr.children ?? []) walkSubtree(c);
+  }
+  walkSubtree(node);
+
+  const rootIdMap = new Map<string, { tag: string; cls: string }>();
+  function walkRoot(curr: N) {
+    if (curr.htmlId) rootIdMap.set(curr.htmlId, { tag: curr.tag, cls: curr.cls });
+    for (const c of curr.children ?? []) walkRoot(c);
+  }
+  walkRoot(rootNode);
+
+  const seen = new Set<string>();
+  const result: Array<{
+    href: string;
+    targetId: string;
+    targetTag?: string | undefined;
+    targetCls?: string | undefined;
+  }> = [];
+  for (const targetId of hrefs) {
+    if (!subtreeIds.has(targetId) && !seen.has(targetId)) {
+      seen.add(targetId);
+      const targetInfo = rootIdMap.get(targetId);
+      result.push({
+        href: `#${targetId}`,
+        targetId,
+        targetTag: targetInfo?.tag,
+        targetCls: targetInfo?.cls,
+      });
+    }
+  }
+  return result;
+}
+
+/**
+ * Gera um documento HTML5 completo e autossuficiente (com `<!DOCTYPE html>`,
+ * `<html lang="pt-BR">`, `<head>`, `<meta charset="UTF-8">`, viewport, Google Fonts,
+ * `<style>` e `<body class="pagina">`) para um elemento/seção ou para o site inteiro,
+ * pronto para o aluno salvar como `index.html` e abrir no navegador.
  */
 export function toStandaloneHtmlDocument(
   n: N,
@@ -356,11 +416,13 @@ export function toStandaloneHtmlDocument(
   const isFullPage = n.tag === "body";
   const cssCode = isFullPage
     ? toFullSiteCss(n, overrides)
-    : `/* Reset básico e fonte/fundo herdados da página */\n* {\n  box-sizing: border-box;\n}\n\nbody {\n${Object.entries(
+    : `/* Regras gerais e fonte/fundo herdados da página (.pagina) */\n* {\n  box-sizing: border-box;\n}\n\n.pagina {\n${Object.entries(
         pageStyle,
       )
         .map(([k, v]) => `  ${k}: ${v};`)
-        .join("\n")}\n}\n\nh1, h2, h3, p {\n  margin-top: 0;\n}\n\n${toCss(n, overrides)}`;
+        .join(
+          "\n",
+        )}\n}\n\nh1, h2, h3, p {\n  margin-top: 0;\n}\n\n${toCss(n, overrides)}\n\n/* Responsividade para celulares e telas até 800px (Aula 5) */\n@media screen and (max-width: 800px) {\n  div, img {\n    float: none;\n    width: 100%;\n    margin-left: 0px;\n    margin-right: 0px;\n  }\n}`;
 
   const bodyHtml = isFullPage
     ? (n.children ?? []).map((c) => toHtml(c, 2, contentOverrides)).join("\n")
@@ -406,8 +468,11 @@ export function highlight(code: string, lang: "html" | "css"): string {
       )
       .replace(/(&lt;\/?)([a-z0-9!]+)/gi, '$1<span class="tk-tag">$2</span>');
   return e
-    .replace(/^(\/\*.*\*\/)$/gm, '<span class="tk-str">$1</span>')
-    .replace(/^(\.[\w-]+|body|\*|h1, h2, h3, p)/gm, '<span class="tk-tag">$1</span>')
+    .replace(/^(\s*\/\*.*\*\/)$/gm, '<span class="tk-str">$1</span>')
+    .replace(
+      /^(\s*)(\.[\w-]+|@media[^{]+|body|div, img|\*|h1, h2, h3, p)/gm,
+      '$1<span class="tk-tag">$2</span>',
+    )
     .replace(
       /^(\s+)([a-z-]+):(.*);$/gm,
       '$1<span class="tk-attr">$2</span>:<span class="tk-str">$3</span>;',
