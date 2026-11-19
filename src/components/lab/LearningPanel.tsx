@@ -119,13 +119,26 @@ export function LearningPanel({
             <p>{kindInfo[node.kind].explica}</p>
             <div className="rounded-lg bg-secondary p-3 text-secondary-foreground">
               <p>
-                Tag HTML: <code>&lt;{node.tag === "body" ? "body" : node.tag}&gt;</code> · Classe
-                CSS: <code>.{node.cls}</code>
+                Tag HTML: <code>&lt;{node.tag === "body" ? "body" : node.tag}&gt;</code>
+                {node.htmlId ? (
+                  <>
+                    {" "}
+                    · ID: <code>#{node.htmlId}</code>
+                  </>
+                ) : null}{" "}
+                · Classe CSS: <code>.{node.cls}</code>
               </p>
               <p className="mt-1 text-xs opacity-90">
                 No HTML, o atributo <code>class="{node.cls}"</code> identifica este elemento para
                 que o seletor <code>.{node.cls}</code> no CSS aplique suas cores, fontes e
                 espaçamentos.
+                {node.htmlId ? (
+                  <>
+                    {" "}
+                    Já o atributo <code>id="{node.htmlId}"</code> permite que um link{" "}
+                    <code>href="#{node.htmlId}"</code> role a página diretamente até esta seção!
+                  </>
+                ) : null}
               </p>
             </div>
 

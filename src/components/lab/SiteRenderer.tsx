@@ -38,6 +38,7 @@ export function SiteRenderer({
   };
 
   const props = {
+    id: n.htmlId,
     className: `lab-el ${isSel ? "lab-sel" : ""} ${showXray ? "lab-xray" : ""}`.trim(),
     style: toReact({ ...n.style, ...ov[n.id] }),
     onClick: (e: MouseEvent) => {
@@ -53,7 +54,7 @@ export function SiteRenderer({
 
   const xrayBadge =
     showXray && !isSel ? (
-      <span className="lab-xray-badge">{`<${n.tag === "body" ? "body" : n.tag} class="${n.cls}">`}</span>
+      <span className="lab-xray-badge">{`<${n.tag === "body" ? "body" : n.tag}${n.htmlId ? ` id="${n.htmlId}"` : ""} class="${n.cls}">`}</span>
     ) : null;
 
   if (n.tag === "img") {

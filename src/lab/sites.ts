@@ -125,6 +125,7 @@ function buildOds2(): N {
             padding: "48px 6%",
           },
           {
+            htmlId: "inicio",
             children: [
               mk(
                 "column",
@@ -225,6 +226,7 @@ function buildOds2(): N {
             "text-align": "center",
           },
           {
+            htmlId: "problema",
             children: [
               mk(
                 "h2",
@@ -313,6 +315,7 @@ function buildOds2(): N {
             padding: "48px 6%",
           },
           {
+            htmlId: "iniciativas",
             children: [
               mk(
                 "h2",
@@ -477,6 +480,7 @@ function buildOds2(): N {
             padding: "48px 10%",
           },
           {
+            htmlId: "ajudar",
             children: [
               mk(
                 "h2",
@@ -691,6 +695,7 @@ function buildOds4(): N {
             "border-bottom": "2px solid #f5c2c7",
           },
           {
+            htmlId: "capa",
             children: [
               mk(
                 "h1",
@@ -772,6 +777,7 @@ function buildOds4(): N {
                   border: "3px solid #c5192d",
                 },
                 {
+                  htmlId: "dados",
                   children: [
                     mk(
                       "h2",
@@ -900,6 +906,7 @@ function buildOds4(): N {
                   width: "64%",
                 },
                 {
+                  htmlId: "metas",
                   children: [
                     mk(
                       "img",
@@ -1031,6 +1038,7 @@ function buildOds4(): N {
             "text-align": "center",
           },
           {
+            htmlId: "participe",
             children: [
               mk(
                 "p",
@@ -1253,6 +1261,7 @@ function buildOds6(): N {
             padding: "48px 8%",
           },
           {
+            htmlId: "metas",
             children: [
               mk(
                 "h2",
@@ -1478,6 +1487,7 @@ function buildOds11(): N {
             padding: "44px 6%",
           },
           {
+            htmlId: "desafios",
             children: [
               mk(
                 "column",
@@ -1540,6 +1550,7 @@ function buildOds11(): N {
             padding: "40px 5%",
           },
           {
+            htmlId: "pilares",
             children: [
               mk(
                 "h2",
@@ -1557,26 +1568,28 @@ function buildOds11(): N {
                 },
                 { text: "Três pilares de uma cidade sustentável" },
               ),
-              ...([
+              ...(
                 [
-                  "1. Mobilidade Limpa",
-                  "Ônibus elétricos, calçadas acessíveis e ciclovias conectando os bairros diminuem o trânsito e a poluição.",
-                  "#fff4dc",
-                  "#e08a1e",
-                ],
-                [
-                  "2. Parques e Árvores",
-                  "Praças arborizadas refrescam o calor urbano, absorvem a água da chuva e oferecem lazer gratuito.",
-                  "#e8f5ee",
-                  "#2f6f4f",
-                ],
-                [
-                  "3. Moradia Digna",
-                  "Bairros planejados com iluminação pública, coleta seletiva, saneamento e escolas próximas.",
-                  "#fbe4d8",
-                  "#b8541a",
-                ],
-              ] as const).map(([tit, txt, bg, borderCol]) =>
+                  [
+                    "1. Mobilidade Limpa",
+                    "Ônibus elétricos, calçadas acessíveis e ciclovias conectando os bairros diminuem o trânsito e a poluição.",
+                    "#fff4dc",
+                    "#e08a1e",
+                  ],
+                  [
+                    "2. Parques e Árvores",
+                    "Praças arborizadas refrescam o calor urbano, absorvem a água da chuva e oferecem lazer gratuito.",
+                    "#e8f5ee",
+                    "#2f6f4f",
+                  ],
+                  [
+                    "3. Moradia Digna",
+                    "Bairros planejados com iluminação pública, coleta seletiva, saneamento e escolas próximas.",
+                    "#fbe4d8",
+                    "#b8541a",
+                  ],
+                ] as const
+              ).map(([tit, txt, bg, borderCol]) =>
                 mk(
                   "card",
                   "div",
@@ -1643,6 +1656,7 @@ function buildOds11(): N {
             padding: "44px 6%",
           },
           {
+            htmlId: "solucoes",
             children: [
               mk(
                 "img",
@@ -1872,6 +1886,7 @@ function buildOds12(): N {
             "text-align": "center",
           },
           {
+            htmlId: "inicio",
             children: [
               mk(
                 "img",
@@ -1955,6 +1970,7 @@ function buildOds12(): N {
             padding: "48px 8%",
           },
           {
+            htmlId: "cinco-rs",
             children: [
               mk(
                 "column",
@@ -2052,6 +2068,7 @@ function buildOds12(): N {
             padding: "44px 6%",
           },
           {
+            htmlId: "praticas",
             children: [
               mk(
                 "h2",
@@ -2150,6 +2167,7 @@ function buildOds12(): N {
             "text-align": "center",
           },
           {
+            htmlId: "desafio",
             children: [
               mk(
                 "p",
@@ -2279,6 +2297,7 @@ function buildOds13(): N {
             "text-align": "center",
           },
           {
+            htmlId: "alerta",
             children: [
               mk(
                 "h1",
@@ -2384,6 +2403,7 @@ function buildOds13(): N {
             "border-bottom": "2px solid #dfeadb",
           },
           {
+            htmlId: "causas",
             children: [
               mk(
                 "img",
@@ -2482,6 +2502,7 @@ function buildOds13(): N {
             padding: "44px 6%",
           },
           {
+            htmlId: "solucoes",
             children: [
               mk(
                 "img",

@@ -23,6 +23,7 @@ export type Kind =
 
 export type N = {
   id: string;
+  htmlId?: string | undefined;
   kind: Kind;
   tag: string;
   cls: string;
@@ -235,7 +236,9 @@ export function toHtml(n: N, depth = 0, contentOverrides: ContentOverrides = {})
   const src = co?.src ?? n.src;
   const alt = co?.alt ?? n.alt ?? "";
 
-  let attrs = ` class="${n.cls}"`;
+  let attrs = "";
+  if (n.htmlId) attrs += ` id="${n.htmlId}"`;
+  attrs += ` class="${n.cls}"`;
   if (n.href) attrs += ` href="${n.href}"`;
   if (n.tag === "img") return `${pad}<img${attrs} src="${src}" alt="${esc(alt)}">`;
   if (!n.children?.length) return `${pad}<${n.tag}${attrs}>${esc(text)}</${n.tag}>`;

@@ -25,6 +25,15 @@ function findByClass(node: N, cls: string): N | undefined {
   return undefined;
 }
 
+function collectAnchorsAndIds(node: N, hrefs: string[] = [], ids: Set<string> = new Set()) {
+  if (node.htmlId) ids.add(node.htmlId);
+  if (node.href?.startsWith("#")) hrefs.push(node.href.slice(1));
+  for (const child of node.children ?? []) {
+    collectAnchorsAndIds(child, hrefs, ids);
+  }
+  return { hrefs, ids };
+}
+
 describe("App routing & ODS sites HTML/CSS fidelity", () => {
   it("matches a page for / instead of falling back to not found", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
@@ -78,6 +87,14 @@ describe("App routing & ODS sites HTML/CSS fidelity", () => {
       const fullDoc = toStandaloneHtmlDocument(site.root, site.nome, site.root.style);
       expect(fullDoc).toContain("<!DOCTYPE html>");
       expect(fullDoc).toContain('<body class="pagina">');
+
+      // Every internal anchor link (href="#...") must match an element with id="..." in the same site
+      const { hrefs, ids } = collectAnchorsAndIds(site.root);
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const targetId of hrefs) {
+        expect(ids.has(targetId)).toBe(true);
+        expect(fullDoc).toContain(`id="${targetId}"`);
+      }
     }
 
     // Verify the 6 sites have distinct top section layouts
