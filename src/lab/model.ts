@@ -1,30 +1,119 @@
 export type Style = Record<string, string>;
 export type Kind =
-  | "page" | "header" | "logo" | "nav" | "link" | "section" | "h1" | "h2" | "h3" | "p"
-  | "img" | "button" | "grid" | "card" | "column" | "stat" | "footer";
+  | "page"
+  | "header"
+  | "logo"
+  | "nav"
+  | "link"
+  | "section"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "p"
+  | "img"
+  | "button"
+  | "grid"
+  | "card"
+  | "column"
+  | "stat"
+  | "footer";
 export type N = {
-  id: string; kind: Kind; tag: string; cls: string; label: string;
-  text?: string; src?: string; alt?: string; href?: string; style: Style; children?: N[];
+  id: string;
+  kind: Kind;
+  tag: string;
+  cls: string;
+  label: string;
+  text?: string;
+  src?: string;
+  alt?: string;
+  href?: string;
+  style: Style;
+  children?: N[];
 };
 
 export const kindInfo: Record<Kind, { nome: string; explica: string }> = {
-  page: { nome: "Página", explica: "É o contêiner principal que envolve todo o site. Define a fonte e a cor de fundo gerais." },
-  header: { nome: "Cabeçalho", explica: "O <header> é o topo do site. Normalmente traz o logotipo e o menu de navegação, ajudando o visitante a se orientar." },
-  logo: { nome: "Logotipo", explica: "Identifica o site. Geralmente é um texto destacado ou uma imagem com o nome do projeto." },
-  nav: { nome: "Menu de navegação", explica: "O <nav> agrupa os links principais do site. Usar display: flex coloca os links lado a lado." },
-  link: { nome: "Link", explica: "O <a> cria um link. O atributo href diz para onde ele leva — aqui, para uma seção da própria página (âncora com #)." },
-  section: { nome: "Seção", explica: "A <section> divide a página em blocos temáticos. Cada seção costuma ter um título e um conteúdo relacionado." },
-  h1: { nome: "Título principal", explica: "O <h1> é o título mais importante da página. Deve existir apenas um por página, pois ajuda leitores de tela e buscadores a entender o assunto." },
-  h2: { nome: "Título de seção", explica: "O <h2> é um subtítulo que nomeia cada seção. Os títulos seguem uma hierarquia: h1 > h2 > h3." },
-  h3: { nome: "Título de card", explica: "O <h3> é um título de terceiro nível, usado dentro de cards ou subseções." },
-  p: { nome: "Parágrafo", explica: "O <p> guarda blocos de texto. O CSS controla tamanho, cor e espaçamento entre linhas (line-height) para facilitar a leitura." },
-  img: { nome: "Imagem", explica: "O <img> exibe uma imagem. O atributo src indica o arquivo e o alt descreve a imagem para quem não pode vê-la — sempre preencha o alt!" },
-  button: { nome: "Botão", explica: "Um elemento de chamada para ação. Cores fortes, padding generoso e bordas arredondadas convidam o clique." },
-  grid: { nome: "Grade / Colunas", explica: "Um contêiner que organiza itens em colunas usando display: grid. grid-template-columns define quantas colunas existem." },
-  card: { nome: "Card", explica: "Um card é uma caixinha que agrupa informação relacionada (título + texto). Fundo, padding e border-radius dão o visual de cartão." },
-  column: { nome: "Coluna", explica: "Uma coluna de um layout dividido. Junto com outras colunas, forma um layout lado a lado." },
-  stat: { nome: "Destaque de dado", explica: "Um bloco que destaca um número importante. Fonte grande chama atenção para o dado." },
-  footer: { nome: "Rodapé", explica: "O <footer> fecha a página com créditos, contatos e links secundários." },
+  page: {
+    nome: "Página",
+    explica:
+      "É o contêiner principal que envolve todo o site. Define a fonte e a cor de fundo gerais.",
+  },
+  header: {
+    nome: "Cabeçalho",
+    explica:
+      "O <header> é o topo do site. Normalmente traz o logotipo e o menu de navegação, ajudando o visitante a se orientar.",
+  },
+  logo: {
+    nome: "Logotipo",
+    explica:
+      "Identifica o site. Geralmente é um texto destacado ou uma imagem com o nome do projeto.",
+  },
+  nav: {
+    nome: "Menu de navegação",
+    explica:
+      "O <nav> agrupa os links principais do site. Usar display: flex coloca os links lado a lado.",
+  },
+  link: {
+    nome: "Link",
+    explica:
+      "O <a> cria um link. O atributo href diz para onde ele leva — aqui, para uma seção da própria página (âncora com #).",
+  },
+  section: {
+    nome: "Seção",
+    explica:
+      "A <section> divide a página em blocos temáticos. Cada seção costuma ter um título e um conteúdo relacionado.",
+  },
+  h1: {
+    nome: "Título principal",
+    explica:
+      "O <h1> é o título mais importante da página. Deve existir apenas um por página, pois ajuda leitores de tela e buscadores a entender o assunto.",
+  },
+  h2: {
+    nome: "Título de seção",
+    explica:
+      "O <h2> é um subtítulo que nomeia cada seção. Os títulos seguem uma hierarquia: h1 > h2 > h3.",
+  },
+  h3: {
+    nome: "Título de card",
+    explica: "O <h3> é um título de terceiro nível, usado dentro de cards ou subseções.",
+  },
+  p: {
+    nome: "Parágrafo",
+    explica:
+      "O <p> guarda blocos de texto. O CSS controla tamanho, cor e espaçamento entre linhas (line-height) para facilitar a leitura.",
+  },
+  img: {
+    nome: "Imagem",
+    explica:
+      "O <img> exibe uma imagem. O atributo src indica o arquivo e o alt descreve a imagem para quem não pode vê-la — sempre preencha o alt!",
+  },
+  button: {
+    nome: "Botão",
+    explica:
+      "Um elemento de chamada para ação. Cores fortes, padding generoso e bordas arredondadas convidam o clique.",
+  },
+  grid: {
+    nome: "Grade / Colunas",
+    explica:
+      "Um contêiner que organiza itens em colunas usando display: grid. grid-template-columns define quantas colunas existem.",
+  },
+  card: {
+    nome: "Card",
+    explica:
+      "Um card é uma caixinha que agrupa informação relacionada (título + texto). Fundo, padding e border-radius dão o visual de cartão.",
+  },
+  column: {
+    nome: "Coluna",
+    explica:
+      "Uma coluna de um layout dividido. Junto com outras colunas, forma um layout lado a lado.",
+  },
+  stat: {
+    nome: "Destaque de dado",
+    explica: "Um bloco que destaca um número importante. Fonte grande chama atenção para o dado.",
+  },
+  footer: {
+    nome: "Rodapé",
+    explica: "O <footer> fecha a página com créditos, contatos e links secundários.",
+  },
 };
 
 export const propInfo: Record<string, string> = {
@@ -79,12 +168,17 @@ export function toHtml(n: N, depth = 0): string {
 }
 
 export function toCss(n: N, s: Style = n.style): string {
-  return `.${n.cls} {\n${Object.entries(s).map(([k, v]) => `  ${k}: ${v};`).join("\n")}\n}`;
+  return `.${n.cls} {\n${Object.entries(s)
+    .map(([k, v]) => `  ${k}: ${v};`)
+    .join("\n")}\n}`;
 }
 
 export function findNode(n: N, id: string): N | undefined {
   if (n.id === id) return n;
-  for (const c of n.children ?? []) { const f = findNode(c, id); if (f) return f; }
+  for (const c of n.children ?? []) {
+    const f = findNode(c, id);
+    if (f) return f;
+  }
   return undefined;
 }
 
@@ -93,8 +187,14 @@ export function highlight(code: string, lang: "html" | "css"): string {
   if (lang === "html")
     return e
       .replace(/(&lt;\/?)([a-z0-9]+)/g, '$1<span class="tk-tag">$2</span>')
-      .replace(/([a-z-]+)=("[^"]*")/g, '<span class="tk-attr">$1</span>=<span class="tk-str">$2</span>');
+      .replace(
+        /([a-z-]+)=("[^"]*")/g,
+        '<span class="tk-attr">$1</span>=<span class="tk-str">$2</span>',
+      );
   return e
     .replace(/^(\.[\w-]+)/gm, '<span class="tk-tag">$1</span>')
-    .replace(/^(\s+)([a-z-]+):(.*);$/gm, '$1<span class="tk-attr">$2</span>:<span class="tk-str">$3</span>;');
+    .replace(
+      /^(\s+)([a-z-]+):(.*);$/gm,
+      '$1<span class="tk-attr">$2</span>:<span class="tk-str">$3</span>;',
+    );
 }
