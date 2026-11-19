@@ -71,13 +71,20 @@ function build(c: Content): N {
     style: Style,
     extra: Partial<N> = {},
   ): N => ({ id: `${c.slug}-${i++}`, kind, tag, cls, label, style, ...extra });
-  const h2 = (txt: string, color = t.text) =>
+  const h2 = (txt: string, color = t.text, cls = "titulo-secao") =>
     mk(
       "h2",
       "h2",
-      "titulo-secao",
+      cls,
       "Título de seção",
-      { "font-family": t.heading, "font-size": "34px", color, "margin-bottom": "16px" },
+      {
+        "font-family": t.heading,
+        "font-size": "34px",
+        "font-weight": "700",
+        color,
+        "margin-top": "0px",
+        "margin-bottom": "16px",
+      },
       { text: txt },
     );
   const p = (txt: string, color = t.text, cls = "texto") =>
@@ -86,7 +93,14 @@ function build(c: Content): N {
       "p",
       cls,
       "Parágrafo",
-      { "font-size": "17px", "line-height": "1.7", color, "margin-bottom": "12px" },
+      {
+        "font-family": t.body,
+        "font-size": "17px",
+        "line-height": "1.7",
+        color,
+        "margin-top": "0px",
+        "margin-bottom": "12px",
+      },
       { text: txt },
     );
   const btn = (txt: string, bg = t.primary, fg = t.onPrimary) =>
@@ -101,6 +115,8 @@ function build(c: Content): N {
         color: fg,
         padding: "14px 28px",
         "border-radius": t.radius,
+        "font-family": t.body,
+        "font-size": "16px",
         "font-weight": "700",
         "text-decoration": "none",
       },
@@ -118,8 +134,10 @@ function build(c: Content): N {
       {
         "font-family": t.heading,
         "font-size": "52px",
+        "font-weight": "700",
         "line-height": "1.1",
         color: t.text,
+        "margin-top": "0px",
         "margin-bottom": "20px",
       },
       { text: c.heroTitle },
@@ -132,7 +150,7 @@ function build(c: Content): N {
       ? section(
           "hero",
           {
-            background: t.heroBg,
+            "background-color": t.heroBg,
             display: "grid",
             "grid-template-columns": "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "48px",
@@ -157,23 +175,32 @@ function build(c: Content): N {
             ),
           ],
         )
-      : section("hero", { background: t.heroBg, "text-align": "center", padding: "110px 8%" }, [
-          mk(
-            "column",
-            "div",
-            "hero-conteudo",
-            "Coluna",
-            { "max-width": "760px", margin: "0 auto" },
-            { children: heroText },
-          ),
-        ]);
+      : section(
+          "hero",
+          { "background-color": t.heroBg, "text-align": "center", padding: "110px 8%" },
+          [
+            mk(
+              "column",
+              "div",
+              "hero-conteudo",
+              "Coluna",
+              { "max-width": "760px", margin: "0 auto" },
+              { children: heroText },
+            ),
+          ],
+        );
 
   return mk(
     "page",
     "body",
     "pagina",
     "Página",
-    { "font-family": t.body, "background-color": t.bg, color: t.text },
+    {
+      "font-family": t.body,
+      "background-color": t.bg,
+      color: t.text,
+      margin: "0px",
+    },
     {
       children: [
         mk(
@@ -198,7 +225,12 @@ function build(c: Content): N {
                 "strong",
                 "logo",
                 "Logotipo",
-                { "font-family": t.heading, "font-size": "22px", color: t.primary },
+                {
+                  "font-family": t.heading,
+                  "font-size": "22px",
+                  "font-weight": "700",
+                  color: t.primary,
+                },
                 { text: c.marca },
               ),
               mk(
@@ -215,6 +247,7 @@ function build(c: Content): N {
                       "menu-link",
                       "Link",
                       {
+                        "font-family": t.body,
                         color: t.text,
                         "text-decoration": "none",
                         "font-weight": "600",
@@ -287,7 +320,9 @@ function build(c: Content): N {
                           display: "block",
                           "font-family": t.heading,
                           "font-size": "48px",
+                          "font-weight": "700",
                           color: t.accent,
+                          "margin-bottom": "8px",
                         },
                         { text: n },
                       ),
@@ -336,7 +371,9 @@ function build(c: Content): N {
                         {
                           "font-family": t.heading,
                           "font-size": "21px",
+                          "font-weight": "700",
                           color: t.primary,
+                          "margin-top": "0px",
                           "margin-bottom": "8px",
                         },
                         { text: h },
@@ -382,7 +419,7 @@ function build(c: Content): N {
                   "div",
                   "lista-solucoes",
                   "Coluna",
-                  {},
+                  { display: "block" },
                   {
                     children: c.sols.map(([h, d]) =>
                       mk(
@@ -402,7 +439,14 @@ function build(c: Content): N {
                               "h3",
                               "solucao-titulo",
                               "Título",
-                              { "font-size": "19px", color: t.text, "margin-bottom": "4px" },
+                              {
+                                "font-family": t.heading,
+                                "font-size": "19px",
+                                "font-weight": "700",
+                                color: t.text,
+                                "margin-top": "0px",
+                                "margin-bottom": "4px",
+                              },
                               { text: h },
                             ),
                             p(d, t.text, "solucao-texto"),
@@ -416,9 +460,9 @@ function build(c: Content): N {
             },
           ),
         ]),
-        section("acao", { background: t.heroBg, "text-align": "center" }, [
-          h2(c.ctaTitle),
-          p(c.ctaText),
+        section("acao", { "background-color": t.heroBg, "text-align": "center" }, [
+          h2(c.ctaTitle, t.text, "acao-titulo"),
+          p(c.ctaText, t.text, "acao-texto"),
           btn(c.ctaBtn),
         ]),
         mk(

@@ -1,4 +1,4 @@
-import { toCss, type N, type Style } from "@/lab/model";
+import { toSingleCss, type N, type Style } from "@/lab/model";
 import { CodeBox } from "./CodeBox";
 
 const px = (v?: string) => (v ? parseInt(v) || 0 : 0);
@@ -86,7 +86,7 @@ export function LabControls({ n, ov, set, reset }: LabControlsProps) {
       {slider("Espaçamento externo", "margin", 80)}
       {slider("Arredondamento", "border-radius", 60)}
       {slider("Largura", "width", 100, "%", 100)}
-      {Object.keys(ov).length > 0 && <CodeBox code={toCss(n, ov)} lang="css" />}
+      {Object.keys(ov).length > 0 && <CodeBox code={toSingleCss(n, cur)} lang="css" />}
       <button
         type="button"
         onClick={reset}

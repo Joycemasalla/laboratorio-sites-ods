@@ -1,8 +1,8 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { LearningPanel, type LearningTab } from "@/components/lab/LearningPanel";
-import { SiteRenderer, type Overrides } from "@/components/lab/SiteRenderer";
-import { findNode } from "@/lab/model";
+import { SiteRenderer } from "@/components/lab/SiteRenderer";
+import { findNode, type Overrides } from "@/lab/model";
 import { sites } from "@/lab/sites";
 
 export const Route = createFileRoute("/site/$slug")({
@@ -58,6 +58,13 @@ function SitePage() {
             </option>
           ))}
         </select>
+        <button
+          type="button"
+          onClick={() => setSel(site.root.id)}
+          className="rounded-md border bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
+        >
+          Ver código do site completo
+        </button>
         <span className="ml-auto hidden text-sm text-muted-foreground sm:inline">
           Clique em qualquer parte do site para aprender 👆
         </span>
@@ -77,9 +84,12 @@ function SitePage() {
         {node && (
           <LearningPanel
             node={node}
+            rootNode={site.root}
+            siteTitle={`ODS ${site.num} — ${site.nome}`}
             tab={tab}
             onTabChange={setTab}
             onClose={() => setSel(undefined)}
+            onSelectNode={(id) => setSel(id)}
             overrides={ov}
             onSetOverride={(nodeId, k, v) =>
               setOv((o) => ({ ...o, [nodeId]: { ...o[nodeId], [k]: v } }))

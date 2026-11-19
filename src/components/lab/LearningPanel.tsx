@@ -1,7 +1,18 @@
-import { kindInfo, propInfo, toCss, toHtml, type N, type Style } from "@/lab/model";
+import { useState } from "react";
+import {
+  collectSubtreeRuleEntries,
+  kindInfo,
+  propInfo,
+  toCss,
+  toHtml,
+  toSingleCss,
+  toStandaloneHtmlDocument,
+  type N,
+  type Overrides,
+  type Style,
+} from "@/lab/model";
 import { CodeBox } from "./CodeBox";
 import { LabControls } from "./LabControls";
-import type { Overrides } from "./SiteRenderer";
 
 export type LearningTab = "entenda" | "html" | "css" | "lab";
 
@@ -14,9 +25,12 @@ const tabs: readonly [LearningTab, string][] = [
 
 interface LearningPanelProps {
   node: N;
+  rootNode: N;
+  siteTitle: string;
   tab: LearningTab;
   onTabChange: (tab: LearningTab) => void;
   onClose: () => void;
+  onSelectNode: (id: string) => void;
   overrides: Overrides;
   onSetOverride: (nodeId: string, prop: string, value: string) => void;
   onResetOverride: (nodeId: string) => void;
@@ -24,19 +38,35 @@ interface LearningPanelProps {
 
 export function LearningPanel({
   node,
+  rootNode,
+  siteTitle,
   tab,
   onTabChange,
   onClose,
+  onSelectNode,
   overrides,
   onSetOverride,
   onResetOverride,
 }: LearningPanelProps) {
+  const [showFullHtml, setShowFullHtml] = useState(false);
+  const [onlyThisRule, setOnlyThisRule] = useState(false);
+
   const nodeOverrides: Style = overrides[node.id] ?? {};
+  const hasChildren = Boolean(node.children && node.children.length > 0);
+  const ruleEntries = collectSubtreeRuleEntries(node, overrides);
+  const currentMergedStyle: Style = { ...node.style, ...nodeOverrides };
+
+  const htmlCode = showFullHtml
+    ? toStandaloneHtmlDocument(node, siteTitle, rootNode.style, overrides)
+    : toHtml(node);
+
+  const cssCode =
+    onlyThisRule || !hasChildren ? toSingleCss(node, currentMergedStyle) : toCss(node, overrides);
 
   return (
     <aside
       aria-label="Painel de aprendizado"
-      className="flex max-h-[55vh] w-full flex-col border-t bg-card md:max-h-none md:w-[400px] md:border-l md:border-t-0"
+      className="flex max-h-[55vh] w-full flex-col border-t bg-card md:max-h-none md:w-[440px] md:border-l md:border-t-0"
     >
       <div className="flex items-start justify-between gap-2 p-4 pb-2">
         <div>
@@ -79,36 +109,112 @@ export function LearningPanel({
         {tab === "entenda" && (
           <div className="space-y-3 text-sm leading-relaxed text-foreground">
             <p>{kindInfo[node.kind].explica}</p>
-            <p className="rounded-lg bg-secondary p-3 text-secondary-foreground">
-              Classe CSS usada: <code>.{node.cls}</code>. É por ela que o CSS encontra e estiliza
-              este elemento.
-            </p>
-            {node.children && (
-              <p className="text-muted-foreground">
-                Este elemento contém {node.children.length} elemento(s) dentro dele — clique neles
-                para explorar.
+            <div className="rounded-lg bg-secondary p-3 text-secondary-foreground">
+              <p>
+                Tag HTML: <code>&lt;{node.tag === "body" ? "body" : node.tag}&gt;</code> · Classe
+                CSS: <code>.{node.cls}</code>
+              </p>
+              <p className="mt-1 text-xs opacity-90">
+                No HTML, o atributo <code>class="{node.cls}"</code> identifica este elemento para
+                que o seletor <code>.{node.cls}</code> no CSS aplique suas cores, fontes e
+                espaçamentos.
+              </p>
+            </div>
+            {hasChildren && (
+              <div className="rounded-lg border p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Elementos dentro deste bloco ({node.children!.length})
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {node.children!.map((child) => (
+                    <button
+                      type="button"
+                      key={child.id}
+                      onClick={() => onSelectNode(child.id)}
+                      className="rounded-md border bg-background px-2 py-1 text-xs font-medium text-foreground transition hover:border-primary hover:text-primary"
+                    >
+                      <code>&lt;{child.tag}&gt;</code> .{child.cls}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === "html" && (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                {showFullHtml
+                  ? "Arquivo index.html completo com HTML + CSS juntos, pronto para salvar e abrir no navegador."
+                  : "Estrutura HTML deste elemento e de tudo que está dentro dele."}
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowFullHtml((v) => !v)}
+                className="rounded-md border bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
+              >
+                {showFullHtml ? "Ver apenas o trecho HTML" : "Ver página HTML + CSS pronta"}
+              </button>
+            </div>
+            <CodeBox code={htmlCode} lang="html" />
+            {!showFullHtml && (
+              <p className="rounded-lg border bg-muted/40 p-2.5 text-xs text-muted-foreground">
+                Dica: Para reproduzir exatamente este visual no seu computador, copie este HTML e
+                combine com o código da aba <b>CSS</b>, ou clique em{" "}
+                <b>"Ver página HTML + CSS pronta"</b> acima.
               </p>
             )}
           </div>
         )}
-        {tab === "html" && <CodeBox code={toHtml(node)} lang="html" />}
+
         {tab === "css" && (
           <div className="space-y-4">
-            <CodeBox code={toCss(node)} lang="css" />
-            <ul className="space-y-2">
-              {Object.entries(node.style).map(([k, v]) => (
-                <li key={k} className="rounded-lg border p-3 text-sm">
-                  <code className="font-semibold text-primary">
-                    {k}: {v}
-                  </code>
-                  <p className="mt-1 text-muted-foreground">
-                    {propInfo[k] ?? "Propriedade de estilo do elemento."}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            {hasChildren && (
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs text-muted-foreground">
+                  {onlyThisRule
+                    ? `Exibindo apenas a regra de .${node.cls}.`
+                    : `Exibindo .${node.cls} e as ${ruleEntries.length - 1} classe(s) internas que compõem este trecho.`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setOnlyThisRule((v) => !v)}
+                  className="rounded-md border bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/80"
+                >
+                  {onlyThisRule ? "Ver CSS completo do trecho" : `Ver só .${node.cls}`}
+                </button>
+              </div>
+            )}
+            <CodeBox code={cssCode} lang="css" />
+            <div className="space-y-4">
+              {(onlyThisRule || !hasChildren ? ruleEntries.slice(0, 1) : ruleEntries).map(
+                (entry) => (
+                  <div key={entry.cls} className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Propriedades de <code className="text-primary">.{entry.cls}</code> (
+                      {entry.label})
+                    </p>
+                    <ul className="space-y-2">
+                      {Object.entries(entry.style).map(([k, v]) => (
+                        <li key={`${entry.cls}-${k}`} className="rounded-lg border p-3 text-sm">
+                          <code className="font-semibold text-primary">
+                            {k}: {v};
+                          </code>
+                          <p className="mt-1 text-muted-foreground">
+                            {propInfo[k] ?? "Propriedade de estilo que controla a apresentação."}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ),
+              )}
+            </div>
           </div>
         )}
+
         {tab === "lab" && (
           <LabControls
             n={node}
