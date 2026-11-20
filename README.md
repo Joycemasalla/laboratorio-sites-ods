@@ -1,4 +1,4 @@
-# Laboratório de Sites ODS — Aprenda Explorando
+# Laboratório de Sites ODS — Aprenda Explorando!
 
 Plataforma educativa e interativa voltada para estudantes iniciantes de **HTML5** e **CSS3**. O objetivo é permitir que os alunos explorem seis sites-modelo sobre os **Objetivos de Desenvolvimento Sustentável (ODS)** da ONU, cliquem em qualquer elemento da página para inspecionar sua função semântica, visualizem e copiem os códigos HTML e CSS correspondentes e experimentem alterações de estilo em tempo real no **Modo Laboratório**.
 
